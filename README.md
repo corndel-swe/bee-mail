@@ -11,8 +11,7 @@ Why 2.0, I hear you ask? Well, read on dear developer...
 ## Background
 
 When we built 1.0, we only had a `User` class. Users sent messages _directly_ to
-each other. It seemed like the simplest solution but, erm... Well just look at
-this:
+each other. It seemed like the simplest solution but, erm... just look at this:
 
 ```mermaid
 graph TD
@@ -49,7 +48,8 @@ To get started:
 
 1. Create a project in your language's project framework
 
-2. Read through the project requirements - it's up to you how to implement them
+2. Read through the [project requirements](/TODO.md) - it's up to you how to
+   implement them
 
 ## Patterns
 
