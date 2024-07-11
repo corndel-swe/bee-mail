@@ -1,4 +1,4 @@
-<p style="text-align: center;">
+<p align="center">
   <img src="logo.png" style="width: 200px; border-radius: 16px;" alt="Bee Mail Logo">
 </p>
 
