@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" style="width: 200px; border-radius: 16px;" alt="Bee Mail Logo">
+  <img src="logo.png" width="200px" alt="Bee Mail Logo">
 </p>
 
 # BeeMail
