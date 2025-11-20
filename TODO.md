@@ -78,7 +78,7 @@ classDiagram
     -string username
     -Message[] inbox
     -App app
-    +login(app: App)
+    +addUser(app: App)
     +sendMessage(recipientId: str, content: str)
     +receiveMessage(message: Message)
     +readMessage(idx: int)
@@ -88,8 +88,8 @@ classDiagram
 - `id` is a unique string which identifies the user.
 - `username` is the user's username.
 - `inbox` is a list of messages the user has received.
-- `app` is the instance of `App` the user is logged into (set by `login`).
-- `login(app)` adds the user to `app.users` and also sets `user.app` to `app`.
+- `app` is the instance of `App` the user is logged into (set by `addUser`).
+- `addUser(app)` adds the user to `app.users` and also sets `user.app` to `app`.
 - **`sendMessage()`**: **Delegates the task of message delivery** to the **`App` Mediator** instance it is logged into (`user.app`), passing the recipient's ID and content. **Crucially, the User does not interact with the recipient directly.**
 - `receiveMessage()` handles adding an incoming message to the user's `inbox` array.
 - `readMessage()` logs the message at the given index in `inbox` to the console, and marks the message as read.
@@ -138,7 +138,7 @@ sequenceDiagram
     participant Recipient
     participant Message
 
-    Sender ->> App: login()
+    Sender ->> App: addUser()
     App -->> Sender: set app
     App ->> App: addUser(Sender)
 
