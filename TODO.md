@@ -2,7 +2,7 @@
 
 We recommend you make three classes: `App`, `User`, and `Message`.
 
-> **Reading the Class Diagrams:** The class diagrams use UML notation to detail class structure: `+` (Public) and `-` (Private) define access visibility. The dollar sign `$` denotes static members, essential for the Singleton. Finally, the format `name: Type` (e.g., `id: str`, `app: App`) specifies data type or return type.
+> **Reading the Class Diagrams:** The class diagrams use UML notation to detail class structure. `+` (Public) and `-` (Private) define access visibility. The dollar sign `$` denotes static members, essential for the Singleton. Finally, the format `name: Type` (e.g., `id: str`, `app: App`) specifies data type or return type.
 
 ## Step 1: Implement the Singleton
 
@@ -50,7 +50,7 @@ graph TD
 
 ### App (The Mediator)
 
-The `App` class centralizes all coordination logic.
+The `App` class centralises all coordination logic.
 
 ```mermaid
 classDiagram
@@ -63,9 +63,9 @@ classDiagram
 ```
 
 - `users` is a collection of all users who have logged into the app.
-- `addUser()` handles adding a new user to the `users` collection.
+- `addUser()` handles adding a new user to the `users` collection and also sets `user.app` to `app` on the given `user`.
 - `findUser()` gets the user with the given id from the `users` collection, if possible.
-- **`deliverMessage()`**: Uses the given information to **create a new instance of `Message`**, finds the recipient user, and then calls the recipient's `receiveMessage()` method to complete the delivery.
+- **`deliverMessage()`**: Uses the given information to find both the sender & recipient user, **create a new instance of `Message`**, and then calls the recipient's `receiveMessage()` method to complete the delivery.
 
 ### User
 
@@ -78,7 +78,6 @@ classDiagram
     -string username
     -Message[] inbox
     -App app
-    +addUser(app: App)
     +sendMessage(recipientId: str, content: str)
     +receiveMessage(message: Message)
     +readMessage(idx: int)
@@ -88,9 +87,8 @@ classDiagram
 - `id` is a unique string which identifies the user.
 - `username` is the user's username.
 - `inbox` is a list of messages the user has received.
-- `app` is the instance of `App` the user is logged into (set by `addUser`).
-- `addUser(app)` adds the user to `app.users` and also sets `user.app` to `app`.
-- **`sendMessage()`**: **Delegates the task of message delivery** to the **`App` Mediator** instance it is logged into (`user.app`), passing the recipient's ID and content. **Crucially, the User does not interact with the recipient directly.**
+- `app` is the single instance of `App` the user is logged into (set by `app.addUser`).
+- **`sendMessage()`**: **Delegates the task of message delivery** to the **`App` Mediator** instance it is logged into (`user.app`), passing the sender & recipient's ID and content. **Crucially, the User does not interact with the recipient directly.**
 - `receiveMessage()` handles adding an incoming message to the user's `inbox` array.
 - `readMessage()` logs the message at the given index in `inbox` to the console, and marks the message as read.
 
@@ -129,27 +127,31 @@ classDiagram
 
 ## Interaction Sequence
 
-This sequence diagram reflects the refactored, decoupled flow where the `App` handles message creation and delivery, and the `Recipient` marks the message as delivered upon receipt.
+> A sequence diagram shows how objects interact over time. It uses vertical lifelines for participants and horizontal arrows for interactions, arranged to represent the order of events, it illustrate the flow of communication in a scenario step by step.
+
+This sequence diagram reflects the refactored, decoupled flow where the `Sender` is registered to the `App` and will delegate sending a message to its mediator. The `App` handles message creation and delivery, and the `Recipient` marks the message as delivered upon receipt.
 
 ```mermaid
 sequenceDiagram
-    participant Sender
-    participant App
-    participant Recipient
+    participant Sender as User(Sender)
+    participant Mediator as App(Mediator)
+    participant Recipient as User(Recipient)
     participant Message
 
-    Sender ->> App: addUser()
-    App -->> Sender: set app
-    App ->> App: addUser(Sender)
+    Note over Sender,Mediator: User Registration
+    Sender ->> Mediator: addUser(user)
+    Mediator -->> Sender: sets user.app = Mediator
+    Mediator ->> Mediator: adds Sender to users collection
 
-    Sender ->> App: sendMessage(recipientId, content)
-    App ->> Message: create new Message()
-    App ->> App: findUser(recipientId)
-    App ->> Recipient: receiveMessage(message)
-
+    Note over Sender,Recipient: Sending a Message via Mediator
+    Sender ->> Mediator: sendMessage(senderId, recipientId, content)
+    Mediator ->> Mediator: findUser(recipientId)
+    Mediator ->> Message: create Message(sender, recipient, content)
+    Mediator ->> Recipient: receiveMessage(message)
     Recipient ->> Recipient: add message to inbox
     Recipient ->> Message: markDelivered()
 
+    Note over Recipient,Message: Reading a Message
     Recipient ->> Recipient: readMessage(idx)
     Recipient ->> Message: markRead()
     Recipient ->> Message: log()
@@ -167,7 +169,7 @@ It's up to you if you'd like to write and then test, or do TDD, but some things 
 - User 1 can send a message to User 2 (via the `App`).
 - User 2 can read the message.
 
-Feel free to add more\!
+Feel free to add more!
 
 ---
 
